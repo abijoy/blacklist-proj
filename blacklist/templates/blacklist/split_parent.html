@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>Split netblock {{ parent_ip }} / {{ cidr }}</h3>
+    <hr>
+    {% for m in messages %}
+        {{ m }}
+    {% endfor %}
+
+
+    <div id="ip-container">
+        <!-- add the parent IP/cidr -->
+        <div class="netblock-root">
+            <a data-ip={{ parent_ip }} data-cidr={{ cidr }} onclick="getValue(this)" expanded="">
+                <i class="sym far fa-caret-square-down" style="cursor: pointer;"></i>                    
+            </a>
+            <span class="ip"> {{ parent_ip }} </span>  <span class="cidr"> / {{ cidr }} </span>
+        </div>
+    </div>
+    <button class="btn btn-go" type="submit">Next <i class="fas fa-angle-right"></i></button>
+
+
+
+    <script>
+        //
+        let selected_ip = new Map();
+        
+        // for checkbox
+        let key = 0;
+        
+        function toggleAddBtn(elem){
+            // add or remove the key if checked/unchecked.
+            elem.checked ? 
+                selected_ip.set($(elem).attr('key'), [$(elem).prev().prev().text().trim(), $(elem).prev().text().trim()])
+                :
+                selected_ip.delete($(elem).attr('key'));
+            
+            console.log(selected_ip);
+            let n = $('input:checked').length;
+            if ( n ) {
+                console.log('duksi');
+                $('.btn-go').show(200);
+                // $('.btn-go').data($('.btn-go').data(''));
+                
+                // print updated map
+    
+            }
+            else {
+                $('.btn-go').hide(200);
+                // console.log($('.btn-go').data());
+                // selected_ip.delete('')
+    
+            }
+     
+        }
+    
+    
+        let netmask_arr = {
+            '22': [255, 255, 252, 0],
+            '23': [255, 255, 254, 0],
+            '24': [255, 255, 255, 0],
+            '25': [255, 255, 255, 128],
+            '26': [255, 255, 255, 192],
+            '27': [255, 255, 255, 224],
+            '28': [255, 255, 255, 240],
+            '29': [255, 255, 255, 248],
+            '30': [255, 255, 255, 252],
+            '31': [255, 255, 255, 254],
+            '32': [255, 255, 255, 255]
+        }
+    
+        function getValue(e) {
+            // e.removeAttribute('onclick')
+            // e.
+    
+            if ( e.getAttribute('expanded')) {
+                $(e).parent().children('div').toggle(500);
+                let symClsList = e.firstElementChild.classList;
+                let sym = symClsList.contains('fa-caret-square-down');
+                console.log(sym);
+                if (sym) {
+                    // $(e).text('[ + ]');
+                    symClsList.remove('fa-caret-square-down');
+                    symClsList.add('fa-caret-square-up');
+                }
+                else {
+                    // $(e:'first-child')
+                    symClsList.remove('fa-caret-square-up')
+                    symClsList.add('fa-caret-square-down')
+                }
+                $(e).prop('expanded', '');
+                // $(e).text();
+                return;
+            }
+    
+            if (e.dataset.cidr == '32') {
+                return;
+            }
+            let parentDiv = e.parentNode
+            result = createIpTable(e.dataset.ip, e.dataset.cidr)
+            addNetblockOnDOM(parentDiv, result.ip_slot1, result.cidr)
+            addNetblockOnDOM(parentDiv, result.ip_slot2, result.cidr)
+            // set expanded attribute
+            e.setAttribute('expanded', 'expanded')
+    
+            e.firstElementChild.classList.remove('fa-caret-square-down')
+            e.firstElementChild.classList.add('fa-caret-square-up')
+    
+        }
+    
+        function addNetblockOnDOM(parentDiv, ip, cidr) {
+            key += 1;
+            let netblock_div = document.createElement('div')
+            netblock_div.className = 'netblock'
+            netblock_div.innerHTML = `<a data-ip=${ip} data-cidr=${cidr} onclick=getValue(this) expanded=''>
+                                        <i class='sym far fa-caret-square-down' style='cursor: pointer;'></i>                    
+                                      </a> <span class='ip'> ${ip} </span>  <span class='cidr'> / ${cidr} </span>
+                                      <input type='checkbox' id='addToMon' key=${key} onchange='toggleAddBtn(this)' class='add-tick'>
+                                       Add to monitor`;
+
+            
+            // adding animation while adding children div
+            $(netblock_div).appendTo(parentDiv).hide().show('normal');
+            // parentDiv.appendChild(netblock_div)
+    
+        }
+    
+        function checkNetblock(ip, cidr) {
+    
+        }
+    
+        function getStartingIP(net_addr, subnet) {
+            let netmask = netmask_arr[subnet]
+            // console.log(netmask, net_addr)
+            // AND operation  of every octect gives the starting IP
+            return [netmask[0] & net_addr[0], netmask[1] & net_addr[1], netmask[2] & net_addr[2], netmask[3] & net_addr[3]]
+        }
+    
+        function createIpTable(net_addr, cidr) {
+            let subnet = Number(cidr)
+            // let netmask_arr = []
+            let net_addr_arr = net_addr.split('.').map(i => Number(i))
+            let startingIP = getStartingIP(net_addr_arr, subnet)
+            // console.log(startingIP)
+            let last_oct_org = startingIP.slice(3)
+            // console.log(last_oct_org)
+            let last_oct = last_oct_org
+            let rem_ip_addr = startingIP.slice(0, 3)
+            // console.log(rem_ip_addr)
+    
+            let sub = subnet
+            let net_bit = 32 - subnet
+            let total_ip = Math.pow(2, net_bit)
+            let total_split_each = Math.pow(2, net_bit - 1)
+    
+    
+            // console.log(total_ip)
+    
+            let ip_slot1 = ''
+            let ip_slot2 = ''
+    
+            if (total_ip <= 256) {
+                ip_slot1 = `${rem_ip_addr.join('.')}.${last_oct_org}`;
+                ip_slot2 = `${rem_ip_addr.join('.')}.${Number(last_oct_org) + total_ip / 2}`
+                // let temp = total_ip + total_ip / 2;
+                // if ( temp <= 256 ) {
+                //     ip_slot2 = `${rem_ip_addr.join('.')}.${total_ip + total_ip / 2}`
+                // }
+            }
+    
+            else {
+                divider = (total_ip / 256) - 1
+                ip_slot1 = `${rem_ip_addr.join('.')}.${last_oct_org}`
+                ip_slot2 = `${rem_ip_addr.slice(0, 2).join('.')}.${rem_ip_addr[2] + divider}.${last_oct_org}`
+            }
+    
+            console.log(ip_slot1)
+            console.log(ip_slot2)
+            return {
+                'ip_slot1': ip_slot1,
+                'ip_slot2': ip_slot2,
+                'cidr': subnet + 1
+            }
+    
+        }
+    
+        function add_netblock() {
+            try {
+                $('#ip-container').html('');
+            }
+            catch(err) {
+                console.log(err);
+            }
+            let netblock = document.getElementById('netblock');
+            let cidr_ = document.getElementById('cidr');
+    
+            let container = document.getElementById('ip-container')
+    
+            // addNetblockOnDOM(container, netblock.value, cidr.value)
+    
+            // initialize ip, cidr variables
+            let ip = netblock.value.split('.').map(i => Number(i));
+            let cidr = cidr_.value;
+    
+            let result = getStartingIP(ip, cidr).join('.')
+            console.log(result);
+    
+            let netblock_div = document.createElement('div')
+            netblock_div.className = 'netblock'
+            netblock_div.innerHTML = `<a data-ip=${result} data-cidr=${cidr} onclick=getValue(this) expanded=''>
+                                        <i class='sym far fa-caret-square-down' style='cursor: pointer;'></i>                    
+                                      </a> <span class='ip'> ${result} </span>  <span class='cidr'> / ${cidr} </span>`;
+            
+            // adding animation while adding children div
+            $(netblock_div).appendTo(container).hide().show('normal');
+            // parentDiv.appendChild(netblock_div)
+    
+        }
+    </script>
+
+
+{% endblock %}
+

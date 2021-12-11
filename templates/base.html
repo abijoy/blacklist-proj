@@ -1,0 +1,270 @@
+{% load static %}
+{% load mathfilters %}
+{% load tz %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <!-- add bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+
+    <title>Blacklist - MyRoot</title>
+
+    <style>
+        body {
+            /* color: #fff; */
+            /* background: #334756; */
+            font-family: 'Roboto', sans-serif;
+        }
+        .form-control{
+            height: 41px;
+            background: #f2f2f2;
+            box-shadow: none !important;
+            border: none;
+        }
+        .form-control:focus{
+            background: #e2e2e2;
+        }
+        .form-control, .btn{        
+            border-radius: 3px;
+        }
+        .signup-form{
+            width: 390px;
+            margin: 30px auto;
+        }
+        .signup-form form{
+            color: #999;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            background: #fff;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+        .signup-form h2 {
+            color: rgb(136, 132, 132);
+            font-weight: bold;
+            margin-top: 0;
+        }
+        .signup-form hr {
+            margin: 0 -30px 20px;
+        }    
+        .signup-form .form-group{
+            margin-bottom: 20px;
+        }
+        .signup-form input[type="checkbox"]{
+            margin-top: 3px;
+        }
+        .signup-form .row div:first-child{
+            padding-right: 10px;
+        }
+        .signup-form .row div:last-child{
+            padding-left: 10px;
+        }
+        .signup-form .btn{        
+            font-size: 16px;
+            font-weight: bold;
+            background: #3598dc;
+            border: none;
+            min-width: 140px;
+        }
+        .signup-form .btn:hover, .signup-form .btn:focus{
+            background: #2389cd !important;
+            outline: none;
+        }
+        /* .signup-form a{
+            color: #fff;
+            text-decoration: underline;
+        }
+        .signup-form a:hover{
+            text-decoration: none;
+        }
+        .signup-form form a{
+            color: #3598dc;
+            text-decoration: none;
+        }	
+        .signup-form form a:hover{
+            text-decoration: underline;
+        } */
+        .signup-form .hint-text {
+            padding-bottom: 15px;
+            text-align: center;
+        }
+    
+        .errorlist {
+          list-style-type: none;
+          margin-left: 0%;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        /* width: 50%; */
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        .cidr {
+            border: 1px solid black;
+            border-radius: 4px;
+            padding: 0px 2px 0px 2px;
+        }
+        .big_cidr {
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .options-btn {
+            /* display: table-cell; */
+            border: 1px solid gray;
+            border-radius: 6px;
+            margin-right: 5px;
+            padding: 5px 18px;
+            font-size: 20px;
+            /* background-color: hsl(146deg 100% 97%); */
+            color: black;
+        }
+        .options-btn:hover {
+            border: 2px dotted orange;
+            background-color: rgb(233, 225, 211);
+            text-decoration: none;
+            /* background-color: rgb(255, 190, 70); */
+            color: black;
+            /* font-weight: bold; */
+        }
+
+        /* make ip row dotted border */
+        .ipRow-dotted {
+            border: 2px dotted black;
+        }
+
+        /* making the anchor tag disabled. */
+        a.disabled {
+            pointer-events: none;
+            cursor: default;
+            color: #c5bbbb;
+        }
+        .ipRow {
+            background-color: white;
+        }
+
+        /* split/calc page css */
+        a {
+            text-decoration: none;
+        }
+
+        .netblock-root {
+
+        }
+
+        .netblock {
+            margin-left: 30px;
+            margin-top: 8px;
+            /* position: relative; */
+            /* display: block; */
+            /* border-left: 2px dotted black; */
+            font-size: 22px;
+            /* margin: auto; */
+
+        }
+
+        .cidr {
+            font-style: italic;
+            border: 2px solid gray;
+            padding-left: 5px;
+            padding-right: 5px;
+            border-radius: 4px;
+            /* font-weight: bold; */
+        }
+        .add-tick {
+            margin-left: 5px;
+        }
+
+        .btn-go {
+            display: none;
+        }
+        .single-ip {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .single-ip:hover {
+            text-decoration: none;
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- navbar needed on all pages. -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            MyRoot.pw
+            <!-- <img src="./myroot-logo.png" width="100" height="30" class="d-inline-block align-top" alt="MyRoot.pw"/> -->
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/myip">My IPs</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/myip/add">Add IP</a>
+            </li>
+           </ul>
+
+        <!-- right aligned float items -->
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/accounts/profile">[ID: {{ user.id }}][ {{ user.username }} ] </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/accounts/logout">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item float-md-right">
+                     <a class="nav-link" href="/accounts/login">login</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        </div>
+      </nav>
+
+      <div class="container">
+        {% block content %}
+        {% endblock %}
+      </div>
+
+
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+            <!-- add  JQuery here too -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
+</html>

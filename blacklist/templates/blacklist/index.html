@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% for m in messages %}
+    {{ m }}
+    {% endfor %}
+
+    <h3>Welcome to Dashboard, {{ request.user.fullname }}</h3>
+{% endblock %}

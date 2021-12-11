@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+{% load tz %}
+
+{% block content %}
+
+    <table>
+        <tr>
+            <th> Date Time</th>
+            <th> Status </th>
+            <th> Details </th>
+
+            <!-- <th rowspan="2">Shared With</th> -->
+        </tr>
+
+        {% for ob in obj %}
+            <tr class="ipRow">
+                <td>
+                    <!-- Delistings  -->
+                    {{ ob.check_datetime }}
+                </td>
+
+                <td>
+                    {{ ob.listed }}
+                </td>
+
+                <td>
+                    {{ ob.listed_by }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

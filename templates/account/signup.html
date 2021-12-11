@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="signup-form">
+    <form action="{% url 'account_signup' %}" method="post">
+      {% csrf_token %}
+		<h2>Sign Up</h2>
+		<p>Please fill in this form to create an account!</p>
+		<hr>
+       
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+          {{ form.fullname }}
+        </div>
+        <div class="form-group">
+        	{{ form.email }}
+        </div>
+        {{ form.email.errors }}
+
+        <div class="form-group">
+        	{{ form.username }}
+        </div>
+
+        {{ form.username.errors }}
+
+        <div class="form-group">
+          {{ form.password1 }}
+        </div>
+		  <div class="form-group">
+        {{ form.password2 }}
+            <!-- <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required="required"> -->
+      </div>
+      {{ form.password1.errors }}
+      {{ form.password2.errors }}   
+
+      <div class="form-group">
+        Account type {{ form.user_type }}
+      </div>
+
+        <div class="form-group">
+			<label class="checkbox-inline"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
+		</div>
+		<div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+    </div>
+    </form>
+	<div class="hint-text">Already have an account? <a href="{% url 'account_login' %}">Login here</a></div>
+</div>
+{% endblock %}

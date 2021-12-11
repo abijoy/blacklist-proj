@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+<!-- {% load mathfilters %} -->
+{% load bl_extras %}
+
+{% block content %}
+    <h3>My IP addresses [ Dashboard ]</h3>
+    <hr>
+    {% for m in messages %}
+        {{ m }}
+    {% endfor %}
+
+    <!-- options buttons -->
+    
+    <div class="">
+        <a href="#" class="options-btn disabled" id="btn-edit">edit <i class="fa fa-edit"></i></a>
+        <a href="#" class="options-btn disabled" id="btn-split" >split <i class="fa fa-sitemap"></i></a>
+        <a href="#" class="options-btn disabled" id="btn-share">share <i class="fa-regular fa-share-from-square"></i></a>
+        <a href="#" class="options-btn disabled" id="btn-remove">remove <i class="fa fa-trash"></i></a>
+    </div>
+
+    <br>
+
+    <table class="ip_management_table">
+        <tr rowspan="2">
+            <th rowspan="2">Select</th>
+            <th rowspan="2">IP addr</th>
+            <th rowspan="2">CIDR</th>
+            <th rowspan="2">IP addresses</th>
+            <th rowspan="2">Total Entries</th>
+            <th colspan="3" style="text-align: center;">
+                IP addr History <br>
+                <small>( last 7 days )</small>
+            </th>
+
+            <!-- <th rowspan="2">Shared With</th> -->
+        </tr>
+
+        <tr>
+            <td>
+                New Listing <br>
+            </td>
+            <td>
+                Delistings <br>
+            </td>
+            <td>
+                Changes (%) <br>
+            </td>
+        </tr>
+
+        {% for nb, ld in netblocks.items %}
+            <tr class="ipRow">
+                <!-- select checkbox -->
+                <td>
+                    <input type="checkbox" class="rowCheckbox">
+
+                </td>
+
+                <!-- IP addr -->
+                <td>
+                    <a href="{% url 'blacklist:blacklist_check' nb.ip_addr nb.cidr %}" class="ip-addr">{{ nb.ip_addr}}</a>
+                    {% if nb.split %}
+                        <i class="far fa-caret-square-down" style="cursor: pointer;"></i>
+                    {% endif %}
+                    <br><small> {{ nb.label }}</small>
+                </td>
+
+                <!-- CIDR -->
+                <td>
+                    <span class="cidr"> /{{ nb.cidr }}</span>
+                </td>
+
+                <td id="total_ip"> 
+                    <!-- total number of IP addresses -->
+                    <!-- {{ nb.cidr|mul:2 }} -->
+                    {{ nb.get_total_ip }}  
+                </td>
+                
+                <td>
+                    <!-- Total blacklist Entries -->
+                    {% if nb.total_listed_ip != 0 %}
+                        <a href="{% url 'blacklist:entries_total' 'listed' nb.id %}" style="color: red;">{{ nb.total_listed_ip }}</a>
+                    {% else %}
+                        <i style="color: green; font-weight: bold;">{{ nb.total_listed_ip }}</i>
+                    {% endif %}
+                
+                </td>
+                <td>
+                    <!-- New listings  -->
+                    {% if ld.0 != 0 %}
+                        <a href="{% url 'blacklist:entries_list_delist_x_days' 'listed' nb.id %}">{{ ld.0 }}</a>
+                    {% else %}
+                        <i>{{ ld.0 }}</i>
+                    {% endif %}
+                </td>
+
+                <td>
+                    <!-- Delistings  -->
+                    {% if ld.1 != 0 %}
+                        <a href="{% url 'blacklist:entries_list_delist_x_days' 'delisted' nb.id %}">{{ ld.1 }}</a>
+                    {% else %}
+                        <i>{{ ld.1 }}</i>
+                    {% endif %}
+                </td>
+
+                <td>
+                    <!-- changes (%) -->
+                </td>
+
+                <!-- declined by client -->
+                <!-- <td>
+                    
+                    <small>client1, client2, client3</small>
+                </td> -->
+            </tr>
+        {% endfor %}
+    </table>
+    <br><hr><br>
+    <script>
+
+        $(document).on('click', 'input[type="checkbox"]', function() {
+            // select all the checkboxes 
+            let checkboxes = $('input[type="checkbox"]')
+            
+            // make other checkboxes not clicked 
+            checkboxes.not(this).prop('checked', false);
+            
+            // make other rows white 
+            checkboxes.not(this).parent().parent().css('background-color', '#ffffff');
+
+            let op_btn = $('.options-btn')  
+            if ($(this).prop('checked')) {
+                op_btn.removeClass('disabled');
+                op_btn.css('cursor', 'pointer');
+                let parent_ip_addr = $(this).parent().next().find('.ip-addr').text().trim();
+                let cidr = $(this).parent().next().next().find('.cidr').text().trim();
+
+                $('#btn-edit').prop('href', '/myip/edit/' + parent_ip_addr + cidr);
+                $('#btn-split').prop('href', '/myip/split/' + parent_ip_addr + cidr);
+                $('#btn-share').prop('href', '/myip/share/' + parent_ip_addr + cidr);
+                $('#btn-remove').prop('href', '/myip/remove/' + parent_ip_addr + cidr);
+
+
+                // make the selected row colored. 
+                $(this).parent().parent().css('background-color', '#ffffe0');
+            }
+            else {
+                op_btn.addClass('disabled');
+                op_btn.css('cursor', '');
+                op_btn.prop('href', "#");
+                // if not checked make the current row white again
+                $(this).parent().parent().css('background-color', '#ffffff');
+            }
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+{% for m in messages %}
+{{ m }}
+{% endfor %}
+
+<div class="signup-form">
+  <form action="{% url 'account_login' %}" method="post">
+    {% csrf_token %}
+  <h2>Log In</h2>
+  <hr>
+    <!-- {{ form.as_p }} -->
+
+    {{ form.non_field_errors }}
+
+    <div class="form-group">
+      {{ form.login }}
+    </div>
+
+    <div class="form-group">
+      {{ form.password }}
+    </div>
+  <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+  </div>
+  
+  <!-- it redirects to the requested page after login -->
+  {% if request.GET.next %}
+    <input type="hidden" name="next" value="{{ request.GET.next }}" />
+  {% endif %}
+
+  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+  </form>
+
+
+	<div class="hint-text">New to MyMonitor ? <a href="{% url 'account_signup' %}">Signup here</a></div>
+  </div>
+{% endblock %}

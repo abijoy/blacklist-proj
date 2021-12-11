@@ -1,0 +1,16 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+
+    {% for m in messages %}
+    {{ m }}
+    {% endfor %}
+
+
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Add</button>
+    </form>
+{% endblock %}

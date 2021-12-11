@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load tz %}
+
+{% block content %}
+    <div>
+        <h3>Entries {{ status }} {{ ip_addr }} /{{ cidr }} <i>{{ since }}</i></h3>
+        <table>
+            <tr>
+                <th>IP</th>
+                <th>Status</th>
+                <th>Last Checked </th>
+                <th>Listed by</th>
+                <th>Listed since</th>
+            </tr>
+        {% for obj in page_obj %}
+                <tr>
+                    <td>
+                        <a href="{% url 'blacklist:hist_single_ip' obj.ip_addr %}" class="single-ip">{{ obj.ip_addr }}</a>
+                    </td>
+
+                    <td>
+                        {% if obj.listed %}
+                            <span style="color: red">blacklisted</span>
+                        {% else %}
+                            <span style="color: green">not blacklisted</span>
+                        {% endif %}
+                    </td>
+
+                    <td class='utctime'>
+                        {% localtime on %}
+                            {{ obj.last_checked_at }}
+                        {% endlocaltime %}
+                    </td>
+
+                    <td>{{ obj.listed_by }}</td>
+                    <td>{{ obj.created_at }}</td>
+                </tr>
+        {% endfor %}
+        </table>
+    </div>
+    </br>
+    <!-- pagination links -->
+    <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <!-- <a class='page-link' href="?page=1">&laquo; first</a> -->
+                    <a class='page-link' href="?page={{ page_obj.previous_page_number }}"> < prev </a>
+                </li>
+            {% endif %}
+    
+            <li class="page-item">
+                <span class='page-link'>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class='page-link' href="?page={{ page_obj.next_page_number }}">next > </a>
+                    <!-- <a class='page-link' href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a> -->
+                </li>
+            {% endif %}
+    </ul>
+    </nav>
+
+    <script>
+        // let utctime = new Date($('#utctime').text)
+    </script>
+{% endblock %}
