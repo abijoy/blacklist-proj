@@ -1,4 +1,3 @@
-# Django Login with Email
+# Blaclist Project
 
-How to enable login with email authentication in Django. Read the tutorial [here](https://rahmanfadhil.com/django-login-with-email/).
 
