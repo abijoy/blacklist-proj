@@ -51,7 +51,7 @@ MIDDLEWARE = [
 
 ]
 
-ROOT_URLCONF = 'django_email_login.urls'
+ROOT_URLCONF = 'blacklist_proj.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_email_login.wsgi.application'
+WSGI_APPLICATION = 'blacklist_proj.wsgi.application'
 
 
 # Database

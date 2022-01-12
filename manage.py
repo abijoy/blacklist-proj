@@ -5,7 +5,7 @@ import sys
 
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_email_login.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blacklist_proj.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

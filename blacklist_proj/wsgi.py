@@ -1,5 +1,5 @@
 """
-WSGI config for django_email_login project.
+WSGI config for blacklist_proj project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_email_login.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blacklist_proj.settings')
 
 application = get_wsgi_application()
