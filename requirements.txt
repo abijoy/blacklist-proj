@@ -1,4 +1,4 @@
-Django==3.2.1
+Django==4.0.1
 django_allauth==0.45.0
 psycopg2==2.9.2
 pydnsbl==1.1.4
