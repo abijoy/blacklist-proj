@@ -8,7 +8,7 @@
             <tr>
                 <th>IP</th>
                 <th>Status</th>
-                <th>Last Checked </th>
+                <th>Last Checked at </th>
                 <th>Listed by</th>
             </tr>
         {% for obj in page_obj %}
@@ -26,7 +26,7 @@
                     </td>
                     <td class='utctime'>
                         {% localtime on %}
-                            {{ obj.check_datetime }}
+                            {{ obj.last_checked_at }}
                         {% endlocaltime %}
                     </td>
 

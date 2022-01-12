@@ -43,9 +43,9 @@ def my_ip_addresses(request):
         # listing_dict = []
         nblock_list_delist_dict = {}
         for n in netblocks:
-            total_lists = Iptable.objects.filter(listed=True, parent=n, updated_at__gte=datetime.now()-timedelta(days=7), updated_at__gt=F('created_at')).count()
+            total_lists = Iptable.objects.filter(listed=True, parent=n, updated_at__gte=datetime.now()-timedelta(days=7)).count()
 
-            total_delists = Iptable.objects.filter(listed=False, parent=n, updated_at__gte=datetime.now()-timedelta(days=7), updated_at__gt=F('created_at')).count()
+            total_delists = Iptable.objects.filter(listed=False, parent=n, updated_at__gte=datetime.now()-timedelta(days=7)).count()
             nblock_list_delist_dict[n] = (total_lists, total_delists)
             # list_delist_dict
 
